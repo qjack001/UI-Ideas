@@ -235,6 +235,8 @@
 						slider.classList.remove("dragged");
 						slider.blur();
 					}
+					
+					snare.volume = (parseFloat(slider.value) / parseFloat(slider.dataset.max))
 				}
 			}
 			
@@ -265,6 +267,8 @@
 				{
 					slider.value = slider.dataset.min
 				}
+				
+				snare.volume = (parseFloat(slider.value) / parseFloat(slider.dataset.max))
 			}
 			
 			function start()
