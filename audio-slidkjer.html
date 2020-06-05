@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			html
+			{
+				text-rendering: optimizeLegibility; 
+				-webkit-font-smoothing: antialiased;    
+				-moz-osx-font-smoothing: grayscale;
+
+				-moz-font-feature-settings:"kern" 1;
+				-ms-font-feature-settings:"kern" 1;
+				-o-font-feature-settings:"kern" 1;
+				-webkit-font-feature-settings:"kern" 1;
+				font-feature-settings:"kern" 1;
+				font-kerning: normal; 	
+			}
+			
+			#input-slider
+			{
+				display: block;
+				cursor: grab;
+				text-align: center;
+				border: solid 1px #000;
+				line-height: 0px;
+				padding: 6px 0px 4px;
+				font-family: "ISO v0.6";
+				letter-spacing: 0.05ch;
+				box-sizing: border-box;
+				width: calc(20px + 3ch);
+				background: #fff;
+				transition: transform 50ms cubic-bezier(1,.01,0,1);
+			}
+			
+			#input-slider:focus-within
+			{
+				cursor: text;
+				outline: none;
+				background: #ddd;
+			}
+			
+			#input-slider.dragged
+			{
+				cursor: grabbing;
+/*				box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);*/
+				user-select: none;
+				caret-color: transparent;
+			}
+			
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button
+			{
+				-webkit-appearance: none;
+				margin: 0;
+			}
+			/* Firefox */
+			input[type=number]
+			{
+				-moz-appearance: textfield;
+			}
+			
+			label
+			{
+				opacity: 0;
+				font-family: "Iso v0.6";
+				text-transform: uppercase;
+				letter-spacing: 0.05ch;
+				font-size: 12px;
+				color: #fff;
+				background: #000;
+				padding: 4px 4px 3px 4px;
+				position: relative;
+				border-radius: 2px;
+				margin-bottom: 10px;
+				display: inline-block;
+				transition: opacity 0.1s ease;
+				
+				display: none;
+			}
+			
+			label::after
+			{
+				content: "";
+				display: block;
+				position: absolute;
+				border: 4px solid transparent;
+				border-top: 4px solid #000;
+				background: transparent;
+				width: 0;
+				left: calc(50% - 4px);
+				bottom: -8px;
+			}
+			
+			[data-tooltip]:hover label
+			{
+				opacity: 1;
+			}
+			
+			[data-tooltip]:focus-within label
+			{
+				opacity: 0;
+			}
+			
+			#cord
+			{
+				width: 1px;
+				background: #000;
+				height: 10px;
+				margin: -13px calc(8.5px + 1.5ch);
+				position: absolute;
+				transform-origin: top;
+				transition: transform 50ms cubic-bezier(1,.01,0,1);
+				z-index: -1;
+			}
+			
+			#center
+			{
+				width: 100px;
+				margin: 45vh auto;
+				display: grid;
+				grid-template-columns: 30px 100px auto;
+				gap: 10px;
+			}
+			
+			h3
+			{
+				line-height: 30px;
+				font-family: "ISO v0.6";
+				letter-spacing: 0.05ch;
+				text-transform: uppercase;
+				font-size: 1rem;
+				font-weight: normal;
+				margin: 0;
+			}
+			
+			h3 .color
+			{
+				display: inline-block;
+				background: #ddd;
+				height: 0.5em;
+				width: 0.5em;
+				border-radius: 100%;
+				margin: 0 1ch 0 0;
+				transform: translateY(-0.05em);
+			}
+			
+			button
+			{
+				border: none;
+				background: transparent;
+				outline: none;
+				cursor: pointer;
+			}
+			
+			.play #stop
+			{
+				display: none;
+			}
+			
+			.pause #play
+			{
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<script>
+			let kick = new Audio('kick+hihat.mp3');
+			kick.volume = 0.5;
+			kick.addEventListener('timeupdate', function()
+			{
+				var buffer = 1.2;
+				if(this.currentTime > this.duration - buffer)
+				{
+					this.currentTime = 0;
+					this.play();
+				}
+			});
+			let snare = new Audio('snare.mp3');
+			snare.volume = 0.5;
+			snare.addEventListener('timeupdate', function()
+			{
+				var buffer = 1.2;
+				if(this.currentTime > this.duration - buffer)
+				{
+					this.currentTime = 0;
+					this.play();
+				}
+			});
+			
+			function clickSlider(event)
+			{
+				event = event || window.event;
+				let start = event.clientY;
+				let slider = document.getElementById("input-slider");
+				let cord = document.getElementById("cord");
+				let start_val = parseInt(slider.value);
+				
+				document.onmousemove = function(event)
+				{
+					event = event || window.event;
+					event.preventDefault();
+					let current = event.clientY;
+					slider.classList.add("dragged");
+					
+					let change = Math.round((current - start) / 10);
+					
+					if((start_val - (change/10)) > slider.dataset.max)
+					{
+						slider.value = slider.dataset.max
+					}
+					else if((start_val -(change/10)) < slider.dataset.min)
+					{
+						slider.value = slider.dataset.min
+					}
+					else
+					{
+						slider.value = (start_val - (change / 10)).toFixed(1);
+						slider.style["transform"] = "translateY(" + (change * 10) + "px)";
+						cord.style["transform"] = "scaleY(" + (change) + ")";
+					}
+					
+					snare.volume = (parseFloat(slider.value) / parseFloat(slider.dataset.max))
+				}
+				
+				document.onmouseup = function() 
+				{
+					slider.style["transform"] = "translateY(0px)";
+					cord.style["transform"] = "scaleY(1)";
+					document.onmouseup = null;
+					document.onmousemove = null;
+					
+					if(slider.classList.contains("dragged"))
+					{
+						slider.classList.remove("dragged");
+						slider.blur();
+					}
+				}
+			}
+			
+			function triggerMouseEvent (node, eventType)
+			{
+				var clickEvent = document.createEvent('MouseEvents');
+				clickEvent.initEvent(eventType, true, true);
+				node.dispatchEvent(clickEvent);
+			}
+			
+			function pressSlider(event)
+			{
+				let key = event.which || event.keyCode; 
+				let slider = document.getElementById("input-slider");
+				
+				if(key == 13)
+				{
+					triggerMouseEvent(slider, "mouseup");
+					slider.blur();
+					slider.value = parseFloat(slider.value).toFixed(1);
+				}
+				
+				if(parseFloat(slider.value) > slider.dataset.max)
+				{
+					slider.value = slider.dataset.max
+				}
+				else if(parseFloat(slider.value) < slider.dataset.min)
+				{
+					slider.value = slider.dataset.min
+				}
+			}
+			
+			function start()
+			{
+				kick.play();
+				snare.play();
+				
+				document.getElementById("play-button").className = "pause";
+				document.getElementById("play-button").onclick = pause;
+			}
+			
+			function pause()
+			{
+				kick.pause();
+				snare.pause();
+				kick.currentTime = 0;
+				snare.currentTime = 0;
+				
+				document.getElementById("play-button").className = "play";
+				document.getElementById("play-button").onclick = start;
+			}
+			
+		</script>
+		<div id="center">
+			<button id="play-button" class="play" title="play">
+				<svg id="play" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" class="svg-inline--fa fa-play fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"></path></svg>
+				<svg id="stop" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="stop" class="svg-inline--fa fa-stop fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48z"/></svg>
+			</button>
+			<h3><span class="color"></span>Snare</h3>
+			<div data-tooltip>
+				<label for="volume">Volume</label>
+				<input name="volume" title="Volume" type="number" id="input-slider" value="2.0" data-max="4.0" data-min="0.0" onkeypress="pressSlider(event)" onmousedown="clickSlider(event)">
+				<div id="cord"></div>
+			</div>
+		</div>
+		<script>
+		
+				document.getElementById("play-button").onclick = start;
+		</script>
+	</body>
+</html>
