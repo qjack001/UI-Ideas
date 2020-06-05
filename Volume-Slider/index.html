@@ -205,22 +205,22 @@
 					
 					let change = Math.round((current - start) / 10);
 					
-					if((start_val - (change/10)) > slider.dataset.max)
+					if((start_val - change) > slider.dataset.max)
 					{
 						slider.value = slider.dataset.max
 					}
-					else if((start_val -(change/10)) < slider.dataset.min)
+					else if((start_val - change) < slider.dataset.min)
 					{
 						slider.value = slider.dataset.min
 					}
 					else
 					{
-						slider.value = (start_val - (change / 10)).toFixed(1);
+						slider.value = (start_val - change)
 						slider.style["transform"] = "translateY(" + (change * 10) + "px)";
 						cord.style["transform"] = "scaleY(" + (change) + ")";
 					}
 					
-					snare.volume = (parseFloat(slider.value) / parseFloat(slider.dataset.max))
+					snare.volume = (parseInt(slider.value) / parseInt(slider.dataset.max))
 				}
 				
 				document.onmouseup = function() 
@@ -236,7 +236,7 @@
 						slider.blur();
 					}
 					
-					snare.volume = (parseFloat(slider.value) / parseFloat(slider.dataset.max))
+					snare.volume = (parseInt(slider.value) / parseInt(slider.dataset.max))
 				}
 			}
 			
@@ -256,19 +256,19 @@
 				{
 					triggerMouseEvent(slider, "mouseup");
 					slider.blur();
-					slider.value = parseFloat(slider.value).toFixed(1);
+					slider.value = parseInt(slider.value);
 				}
 				
-				if(parseFloat(slider.value) > slider.dataset.max)
+				if(parseInt(slider.value) > slider.dataset.max)
 				{
 					slider.value = slider.dataset.max
 				}
-				else if(parseFloat(slider.value) < slider.dataset.min)
+				else if(parseInt(slider.value) < slider.dataset.min)
 				{
 					slider.value = slider.dataset.min
 				}
 				
-				snare.volume = (parseFloat(slider.value) / parseFloat(slider.dataset.max))
+				snare.volume = (parseInt(slider.value) / parseInt(slider.dataset.max))
 			}
 			
 			function start()
@@ -300,7 +300,7 @@
 			<h3><span class="color"></span>Snare</h3>
 			<div data-tooltip>
 				<label for="volume">Volume</label>
-				<input name="volume" title="Volume" type="number" id="input-slider" value="2.0" data-max="4.0" data-min="0.0" onkeypress="pressSlider(event)" onmousedown="clickSlider(event)">
+				<input name="volume" title="Volume" type="number" id="input-slider" value="5" data-max="10" data-min="0" onkeypress="pressSlider(event)" onmousedown="clickSlider(event)">
 				<div id="cord"></div>
 			</div>
 		</div>
