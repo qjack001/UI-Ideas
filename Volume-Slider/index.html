@@ -2,8 +2,19 @@
 <html>
 	<head>
 		<style>
+			@font-face
+			{
+				font-family: 'ui';
+				src: url('../webfont.woff2') format('woff2'),
+					url('../webfont.woff') format('woff'),
+					url('../webfont.ttf') format('truetype');
+				font-weight: normal;
+				font-style: normal;
+			}
+
 			html
 			{
+				font-family: "ui", monospace;
 				text-rendering: optimizeLegibility; 
 				-webkit-font-smoothing: antialiased;    
 				-moz-osx-font-smoothing: grayscale;
@@ -24,7 +35,7 @@
 				border: solid 1px #000;
 				line-height: 0px;
 				padding: 6px 0px 4px;
-				font-family: "ISO v0.6";
+				font-family: "ui", monospace;
 				letter-spacing: 0.05ch;
 				box-sizing: border-box;
 				width: calc(20px + 3ch);
@@ -42,7 +53,6 @@
 			#input-slider.dragged
 			{
 				cursor: grabbing;
-/*				box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);*/
 				user-select: none;
 				caret-color: transparent;
 			}
@@ -53,6 +63,7 @@
 				-webkit-appearance: none;
 				margin: 0;
 			}
+			
 			/* Firefox */
 			input[type=number]
 			{
@@ -62,7 +73,6 @@
 			label
 			{
 				opacity: 0;
-				font-family: "Iso v0.6";
 				text-transform: uppercase;
 				letter-spacing: 0.05ch;
 				font-size: 12px;
@@ -125,7 +135,6 @@
 			h3
 			{
 				line-height: 30px;
-				font-family: "ISO v0.6";
 				letter-spacing: 0.05ch;
 				text-transform: uppercase;
 				font-size: 1rem;
