@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>Background Distortion • UI Ideas</title>
+		<meta name="author" content="Jack Guinane" />
+		<link rel="icon" href="./favicon.ico">
+		<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+
+		<style>
+			html
+			{
+				/* make background grid with linear gradients (replace with image if you want) */
+				background-color: rgb(208 4 4);
+				background-image: linear-gradient(133deg, transparent 25%, transparent 25%, transparent 50%, red 50%, red), 
+					linear-gradient(133deg, red 50%, transparent 50%, transparent 75%, transparent 75%, transparent);
+				background-size: 100px 100px;
+				background-position: 0 0, 102px 102px;
+				background-repeat: repeat;
+			}
+
+			body
+			{
+				/* hacky layout to make it work */
+				margin: 0;
+				padding: 0;
+				width: 100vw;
+				height: 100vh;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			
+			p
+			{
+				/* typeography */
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+				letter-spacing: -0.05em;
+				font-size: 4rem;
+				font-weight: bold;
+				line-height: 0.9;
+				text-rendering: optimizeLegibility; 
+				-webkit-font-smoothing: antialiased;    
+				-moz-osx-font-smoothing: grayscale;
+				-ms-font-feature-settings:"kern" 1;
+				-o-font-feature-settings:"kern" 1;
+				-webkit-font-feature-settings:"kern" 1;
+				font-feature-settings:"kern" 1;
+				-webkit-font-kerning: normal;
+				font-kerning: normal;
+				color: #fff;
+
+				/* layout */
+				max-width: 18ch;
+				padding: 20vh 20px 20px 20px;
+				position: relative;
+				z-index: 99; /* keep the text "above" the distortion (position: relative must be set for this to work) */
+				
+				text-shadow: -8px 8px 0px magenta; /* glitch-y look */
+			}
+
+			@media screen and (max-width: 650px)
+			{
+				p
+				{
+					margin: auto;
+					text-align: center;
+					font-size: 2rem;
+					text-shadow: -5px 5px 0px magenta;
+				}
+			}
+
+			#cursor-distort
+			{
+				position: fixed;
+				height: 300px;
+				width: 300px;
+				top: 0px;
+				left: 0px;
+
+				/* adds ease to movement to make it more smooth and delayed */
+				transition: transform 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+				-webkit-backdrop-filter: url(#filter);
+		 		backdrop-filter: url(#filter); /* add displacment filter (from svg below) */
+				background: transparent;
+				-webkit-mask-image: radial-gradient(black 50%, transparent 100%); /* blurs edges to make it look slightly better */
+    			border-radius: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- This is the content -->
+		<p>The background distorts around the cursor, but this text stays still.</p>
+
+		<!-- This follows the cursor around and distorts the background -->
+		<div id="cursor-distort"></div>
+
+		<!-- This is the svg filter used to make the distortion -->
+		<svg width="300" height="300">
+			<filter id="filter">
+				<feTurbulence id="turbwave" type="fractalNoise" baseFrequency="0.005" numOctaves="2"
+					result="turbulence_3" data-filterId="3" />
+				<feDisplacementMap xChannelSelector="R" yChannelSelector="G" in="SourceGraphic" in2="turbulence_3" scale="50" />
+			</filter>
+		</svg>
+
+		<!-- This is the script that makes the cursor-distort element follow the mouse -->
+		<script>
+			const DISTORTER = document.getElementById("cursor-distort");
+
+			document.body.addEventListener("mousemove", function(e)
+			{
+				let currX = e.clientX;
+				let currY = e.clientY;
+				DISTORTER.style.transform = 'translate(' + 
+						(currX - 150) + 'px, ' + 
+						(currY - 150) + 'px)';
+			});
+		</script>
+	</body>
+</html>
